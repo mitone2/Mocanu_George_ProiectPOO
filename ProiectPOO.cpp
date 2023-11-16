@@ -29,8 +29,14 @@ public:
 	static void setCalcTva(float pret) {
 		cout << pret * TVA;
 	}
-
-
+	AparatFoto() :id(0), tipAparat("DSLR") {
+		this->model = " ";
+		this->autonomie = 0;
+		this->zoom = 0;
+		this->pret = 0;
+		this->marca = new char[strlen(" ") + 1];
+		strcpy(this->marca, " ");
+	}
 	AparatFoto(const char* marca) :id(1), tipAparat("DSLR") {
 		this->model = "Canon 4000 D";
 		this->autonomie = 1400;
@@ -87,7 +93,7 @@ public:
 			}
 			else this->marca = NULL;
 		}
-		return* this;
+		return*this;
 	}
 
 	void afisare() {
@@ -102,14 +108,14 @@ public:
 		return id;
 	}
 
-	const string getTipAparat() const{
+	const string getTipAparat() const {
 		return tipAparat;
 	}
 
 	void setModel(string model) {
 		this->model = model;
 	}
-	string getModel() const{
+	string getModel() const {
 		return model;
 	}
 
@@ -118,18 +124,18 @@ public:
 		strcpy(this->marca, marca);
 	}
 
-	char* getMarca() const{
+	char* getMarca() const {
 		return marca;
 	}
 
-	int getAutonomie() const{
+	int getAutonomie() const {
 		return autonomie;
 	}
 
 	void setAutonomie(int autonomie) {
 		this->autonomie = autonomie;
 	}
-	int getZoom() const{
+	int getZoom() const {
 		return zoom;
 	}
 
@@ -140,7 +146,7 @@ public:
 		this->pret = pret;
 	}
 
-	float getPret() const{
+	float getPret() const {
 		return pret;
 	}
 
@@ -149,6 +155,7 @@ public:
 	friend ostream& operator<<(ostream& masina, const AparatFoto& aparat);
 	friend istream& operator>>(istream& masina, AparatFoto& aparat) {
 		if (aparat.marca != NULL) {
+
 			cout << "Model: ";
 			masina >> aparat.model;
 			cout << "Marca: ";
@@ -186,26 +193,28 @@ public:
 		}
 		return false;
 	}
-	 
+
 	string operator >(const AparatFoto& p) {
 		if (this->pret > p.pret) {
-		  string S = "Aparatul e mai scump decat altul";
-		  return S;
+			string S = "Aparatul e mai scump decat altul";
+			return S;
 		}
 		else {
 			string S = "Aparatul e mai ieftin decat altul";
 			return S;
 		}
-		
+
 	}
 };
 
 
 
-ostream& operator<<(ostream& masina, const AparatFoto& aparat) { 
+ostream& operator<<(ostream& masina, const AparatFoto& aparat) {
 	if (aparat.marca != NULL) {
-		masina << "\nId: " << aparat.getId()<<"\n" <<aparat.getTipAparat()<<"\nModel: "<<aparat.getModel() <<"\nMarca: "
-			<<aparat.getMarca()<<"\nAutonomie: "<<aparat.getAutonomie()<<"\nZoom: "<<aparat.getZoom()<<"\nPret: "<<aparat.pret;
+		masina << "\nId: " << aparat.getId() << "\n" << aparat.getTipAparat();
+			
+			masina<< "\nModel: " << aparat.getModel() << "\nMarca: "
+			<< aparat.getMarca() << "\nAutonomie: " << aparat.getAutonomie() << "\nZoom: " << aparat.getZoom() << "\nPret: " << aparat.pret;
 	}
 	return masina;
 }
@@ -251,17 +260,17 @@ public:
 			cout << "Nu se mai poate face returul,clientul are produsul deja de: ";
 		return posesieClient;
 	}
-	const int getId() const{
+	const int getId() const {
 		return id;
 	}
-	const float getGreutate() const{
+	const float getGreutate() const {
 		return greutate;
 	}
 	void setModel(char* model) {
 		this->model = new char[strlen(model) + 1];
 		strcpy(this->model, model);
 	}
-	char* getModel() const{
+	char* getModel() const {
 		return model;
 	}
 	string getRezolutieCamera() const {
@@ -271,22 +280,29 @@ public:
 		this->rezolutieCamera = rezolutieCamera;
 	}
 
-	float getAutonomie() const{
+	float getAutonomie() const {
 		return autonomie;
 	}
 	void setAutonomie() {
 		this->autonomie = autonomie;
 	}
-	string getConectivitate() const{
+	string getConectivitate() const {
 		return conectivitate;
 	}
 	void setAltitudineZbor(float altitudineZbor) {
 		this->altitudineZbor = altitudineZbor;
 	}
-	float getAltitudineZbor() const{
+	float getAltitudineZbor() const {
 		return altitudineZbor;
 	}
-
+	Drona() :id(0), greutate(500.60) {
+		this->model = new char[strlen(" ") + 1];
+		strcpy(this->model, " ");
+		rezolutieCamera = " ";
+		autonomie = 0;
+		conectivitate = " ";
+		altitudineZbor = 0;
+	}
 
 	Drona(const char* model) :id(1), greutate(650.8) {
 		this->model = new char[strlen(model) + 1];
@@ -321,7 +337,7 @@ public:
 		this->conectivitate = p.autonomie;
 		this->altitudineZbor = p.altitudineZbor;
 	}
-	Drona operator=(const Drona &p) {
+	Drona operator=(const Drona& p) {
 		if (this != &p) {
 			if (this->model != NULL) {
 				delete[]this->model;
@@ -336,7 +352,7 @@ public:
 			else this->model = NULL;
 		}
 		return *this;
-			
+
 	}
 	bool operator ==(const Drona& d) {
 		if (*model != *d.model) {
@@ -384,7 +400,7 @@ int Drona::perioadaRetur = 30;
 
 istream& operator>>(istream& masina, Drona& drona) {
 	if (drona.model != NULL) {
-		cout <<"Model: ";
+		cout << "Model: ";
 		masina >> drona.model;
 		cout << "Rezolutie: ";
 		masina >> drona.rezolutieCamera;
@@ -432,47 +448,49 @@ public:
 		return mufaConectare;
 	}
 
-	const int getId() const{
+	const int getId() const {
 		return id;
 	}
-	const string getRezolutie() const{
+	const string getRezolutie() const {
 		return rezolutie;
 	}
 	void setModel(char* model) {
 		this->model = new char[strlen(model) + 1];
 		strcpy(this->model, model);
 	}
-	char* getModel() const{
+	char* getModel() const {
 		return model;
 	}
 	void setMarca(char* marca) {
 		this->marca = new char[strlen(marca) + 1];
 		strcpy(this->marca, marca);
 	}
-	char* getMarca() const{
+	char* getMarca() const {
 		return marca;
 	}
-	int getContrast() const{
+	int getContrast() const {
 		return contrast;
 	}
 	void setContrast(int contrast) {
 		this->contrast = contrast;
 	}
-	int getNrLumeni () const{
+	int getNrLumeni() const {
 		return nrLumeni;
 	}
 	void SetNrLumeni(int nrLumeni) {
 		this->nrLumeni = nrLumeni;
 	}
-	float getPret() const{
+	float getPret() const {
 		return pret;
 	}
 	void setPret(float pret) {
 		this->pret = pret;
 	}
 	Proiector() :id(0), rezolutie("") {
-		this->model = NULL;
-		this->marca = NULL;
+		this->model = new char[strlen(" ") + 1];
+		strcpy(this->model, " ");
+		this->marca = new char[strlen(" ") + 1];
+		strcpy(this->marca, " ");
 		this->contrast = 0;
 		this->nrLumeni = 0;
 		this->pret = 0;
@@ -522,7 +540,7 @@ public:
 				delete[]this->model;
 				delete[]this->marca;
 				this->model = new char[strlen(p.model) + 1];
-				strcpy(this->model,p.model);
+				strcpy(this->model, p.model);
 				this->marca = new char[strlen(p.marca) + 1];
 				strcpy(this->marca, p.marca);
 				this->contrast = p.contrast;
@@ -553,7 +571,7 @@ public:
 	{
 		if (proiector.model != NULL && proiector.marca != NULL) {
 			cout << "Marca: ";
-			masina >>proiector.model;
+			masina >> proiector.model;
 			cout << "Model: ";
 			masina >> proiector.marca;
 			cout << "Contrast: ";
@@ -592,12 +610,12 @@ public:
 	}
 };
 
-ostream& operator<<(ostream& masina, const Proiector& proiector) 
+ostream& operator<<(ostream& masina, const Proiector& proiector)
 {
 	masina << "\nId: " << proiector.getId() << "\nRezolutie: " << proiector.getRezolutie();
-	if (proiector.model != NULL && proiector.marca  != NULL) {
-		masina << "\nModel: " << proiector.getModel() << "\nMarca: " << proiector.getMarca()<<"\nContrast: "
-			<<proiector.getContrast()<<"\nNr lumeni: "<<proiector.getNrLumeni()<<"\nPret: "<<proiector.getPret();
+	if (proiector.model != NULL && proiector.marca != NULL) {
+		masina << "\nModel: " << proiector.getModel() << "\nMarca: " << proiector.getMarca() << "\nContrast: "
+			<< proiector.getContrast() << "\nNr lumeni: " << proiector.getNrLumeni() << "\nPret: " << proiector.getPret();
 	}
 	else {
 		masina << "-";
@@ -635,6 +653,44 @@ void main() {
 
 	//clasa 1 Aparat Foto
 	AparatFoto aparat1("Canon");
+	AparatFoto* v_aparat = new AparatFoto[3];
+	AparatFoto* pointerAparat = new AparatFoto();
+	int dimVector = 3;
+	//vector
+	for (int i = 0; i < dimVector; i++) {
+		cin >> v_aparat[i];
+		cout << "\n-----------"<<endl;
+	}
+	for (int i = 0; i < dimVector; i++) {
+		cout<< v_aparat[i];
+		cout << "\n-----------" << endl;
+	}
+	delete[]v_aparat;
+	//matrice
+	int linii = 2;
+	int coloane = 2;
+
+	AparatFoto** matrice = new AparatFoto*[linii];
+	for (int i = 0; i < linii; i++) {
+		matrice[i] = new AparatFoto[coloane];
+	}
+	for (int i = 0; i < linii; i++) {
+		for (int j = 0; j < coloane; j++) {
+			cout << "Valoare matrice [" << i << "]["<< j <<"]"<<endl;
+			cin >> matrice[i][j];
+		}
+	}
+	for (int i = 0; i < linii; i++) {
+		for (int j = 0; j < coloane; j++) {
+			cout<<matrice[i][j];
+		}
+	}
+	for (int i = 0; i < linii; i++) {
+		delete[] matrice[i];
+	}
+	delete[]matrice;
+
+
 
 	cout << "APARAT" << endl;
 	cout << "\nId: " << aparat1.getId() << "\nTip: " << aparat1.getTipAparat() << "\nModelul: " << aparat1.getModel() << "\nMarca: "
@@ -653,7 +709,7 @@ void main() {
 	AparatFoto aparat3("Nikon", 3, "DSLR", "Nikon 12A", 4000, 175, 7000);
 	cout << "\nId: " << aparat3.getId() << "\nTip: " << aparat3.getTipAparat() << "\nModelul: " << aparat3.getModel() << "\nMarca: "
 		<< aparat3.getMarca() << "\nAutonomie: " << aparat3.getAutonomie() << " de cadre " << "\nZoom :" << aparat3.getZoom() << "\nUn pret de: " << aparat3.getPret();
-	cout << "\n------------------------------------------------------------------------------------" <<endl;
+	cout << "\n------------------------------------------------------------------------------------" << endl;
 
 	AparatFoto aparat4(aparat1);
 	cout << "Apel constructor copiere\n";
@@ -665,20 +721,31 @@ void main() {
 	aparat2 = aparat1;
 	cout << "\nModelul: " << aparat2.getModel() << "\nMarca: "
 		<< aparat2.getMarca() << "\nAutonomie: " << aparat2.getAutonomie() << " de cadre " << "\nZoom :" << aparat2.getZoom() << "\nUn pret de: " << aparat2.getPret();
-	cout << "\n------------------------------------------------------------------------------------"<<endl;
+	cout << "\n------------------------------------------------------------------------------------" << endl;
 
 	cout << "Operator +=\n";
 	aparat4 += 700;
 	cout << aparat4;
 	cout << "\n------------------------------------------------------------------------------------" << endl;
 	cout << "Operator !=\n\n";
-	cout<< (aparat2 != aparat1);
+	cout << (aparat2 != aparat1);
 	cout << "\n------------------------------------------------------------------------------------" << endl;
 	cout << "Operator >\n\n";
 	cout << (aparat3 > aparat1);
 	cout << "\n------------------------------------------------------------------------------------" << endl;
 
 	cout << "DRONA" << endl;
+
+	Drona* v_drona = new Drona[3];
+	for (int i = 0; i < dimVector; i++) {
+		cin >> v_drona[i];
+		cout << "\n-----------" << endl;
+	}
+	for (int i = 0; i < dimVector; i++) {
+		cout << v_drona[i];
+		cout << "\n-----------" << endl;
+	}
+	delete[]v_drona;
 
 	Drona drona1("SG906 PRO Max");
 	drona1.setPerioadaRetur(29);
@@ -688,16 +755,16 @@ void main() {
 	cout << "\n------------------------------------------------------------------------------------";
 
 	Drona drona2("FR 11", 2, 657.5, "4k");
-	cout << "\nId: " << drona2.getId() << "\nGreutate: " << drona2.getGreutate() <<"\nModel: " << drona2.getModel() << "\nRezolutie camera: "
+	cout << "\nId: " << drona2.getId() << "\nGreutate: " << drona2.getGreutate() << "\nModel: " << drona2.getModel() << "\nRezolutie camera: "
 		<< drona2.getRezolutieCamera() << "\nAutonomie: " << drona2.getAutonomie() << "\nConectivitate: " << drona2.getConectivitate() << "\nAltitudine zbor: " << drona2.getAltitudineZbor();
 	cout << "\n" << Drona::returnarePosibila(21) << " zile";
-	cout << "\n------------------------------------------------------------------------------------"<<endl;
+	cout << "\n------------------------------------------------------------------------------------" << endl;
 
 	Drona drona3("HouDeOS", 3, 500.3, "2k", 0.24);
 	cout << "Id: " << drona3.getId() << "\nGreutate: " << drona3.getGreutate() << "\nModel: " << drona3.getModel() << "\nRezolutie camera: "
 		<< drona3.getRezolutieCamera() << "\nAutonomie: " << drona3.getAutonomie() << "\nConectivitate: " << drona3.getConectivitate() << "\nAltitudine zbor: " << drona3.getAltitudineZbor();
-	cout << "\n------------------------------------------------------------------------------------"<<endl;
-	
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+
 	Drona drona4(drona1);
 	cout << "Apel constructor copiere\n";
 	cout << "\nId: " << drona4.getId() << "\nGreutate: " << drona4.getGreutate() << "\nModel: " << drona4.getModel() << "\nRezolutie camera: "
@@ -713,7 +780,7 @@ void main() {
 	cout << "\nOperator ==\n\n";
 	cout << (drona2 == drona1);
 	cout << "\n------------------------------------------------------------------------------------" << endl;
-    drona2[1] = 'W';
+	drona2[1] = 'W';
 	cout << "\nOperator schimbare litera\n" << drona2;
 	cout << "\n------------------------------------------------------------------------------------" << endl;
 	cout << "\nOperator >=\n";
@@ -721,6 +788,18 @@ void main() {
 	cout << "\n------------------------------------------------------------------------------------" << endl;
 
 	cout << "\nPROIECTOR\n" << endl;
+
+	Proiector* v_proiector = new Proiector[3];
+	for (int i = 0; i < dimVector; i++) {
+		cin >> v_proiector[i];
+		cout << "\n-----------" << endl;
+	}
+	for (int i = 0; i < dimVector; i++) {
+		cout << v_proiector[i];
+		cout << "\n-----------" << endl;
+	}
+	//delete[]v_proiector;
+
 	Proiector proiector1("SW 10", "SUREWHELL");
 	proiector1.setMufaConectare("VGA");
 	cout << "\n" << proiector1.getSePoateConecta("HDMI");
@@ -757,10 +836,10 @@ void main() {
 
 	cout << "Apel operator<<\n" << proiector2;
 	++proiector4;
-	cout << "Operator ++\n"<<proiector4;
+	cout << "Operator ++\n" << proiector4;
 
 	cout << "Apel operator <\n";
-	cout<< (proiector4 <= proiector2);
+	cout << (proiector4 <= proiector2);
 
 	//Proiector proiector5("WowStep M", "Wowstep", 3, "HD", 2000, 7000, 995.7);
 	//proiector5 = proiector1 + proiector3;
