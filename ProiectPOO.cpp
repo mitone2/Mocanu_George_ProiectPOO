@@ -213,7 +213,7 @@ ostream& operator<<(ostream& masina, const AparatFoto& aparat) {
 	if (aparat.marca != NULL) {
 		masina << "\nId: " << aparat.getId() << "\n" << aparat.getTipAparat();
 			
-			masina<< "\nModel: " << aparat.getModel() << "\nMarca: "
+		masina << "\nModel: " << aparat.getModel() << "\nMarca: "
 			<< aparat.getMarca() << "\nAutonomie: " << aparat.getAutonomie() << "\nZoom: " << aparat.getZoom() << "\nPret: " << aparat.pret;
 	}
 	return masina;
@@ -231,10 +231,78 @@ string getModel1(AparatFoto b) {
 	}
 	//return b.model;
 }
-
 string AparatFoto::portIncarcare = "Type C";
 float AparatFoto::TVA = 0.19;
 
+class CardMemorie {
+private:
+	char* producator;
+	int memorie;
+	AparatFoto aparatFoto;
+public:
+	CardMemorie(int memorie, const char* producator, const AparatFoto& aparat) :memorie(memorie), aparatFoto(aparat) {
+		this->producator = new char[strlen(producator) + 1];
+		strcpy_s(this->producator, strlen(producator) + 1, producator);
+	};
+	~CardMemorie() {
+		if (this->producator != NULL) {
+			delete[]this->producator;
+		}
+	}
+	CardMemorie(const CardMemorie& c)  {
+		this->producator = new char[strlen(c.producator) + 1];
+		strcpy_s(this->producator, strlen(c.producator) + 1, c.producator);
+		this->memorie = c.memorie;
+		aparatFoto = c.aparatFoto;
+	}
+	CardMemorie operator= (const CardMemorie& c) {
+		this->producator = new char[strlen(c.producator) + 1];
+		strcpy_s(this->producator, strlen(c.producator) + 1, c.producator);
+		aparatFoto = c.aparatFoto;
+		return *this;
+	}
+	char* getProducator() {
+		return producator;
+	}
+	void setProducator(char* producator) {
+		this->producator = new char[strlen(producator) + 1];
+		strcpy_s(this->producator, strlen(producator) + 1, producator);
+	}
+	int getMemorie() {
+		return memorie;
+	}
+	void setMemorie(int memorie) {
+		this->memorie = memorie;
+	}
+
+	void setAparatFoto(AparatFoto aparat) {
+		aparatFoto = aparat;
+	}
+	AparatFoto getAparatFoto() {
+		return aparatFoto;
+	}
+
+	friend ostream& operator<<(ostream& out, const CardMemorie& card) {
+		out << "Capacitate card: " << card.memorie << " GB\nTip card: " << card.producator;
+		 {
+			out << "\nAparat asociat:\n" << (card.aparatFoto);
+		}
+		return out;
+	}
+	char& operator[](int index) {
+		return this->producator[index];
+		return this->producator[0];
+	}
+	CardMemorie operator++() {
+		this->memorie++;
+		return *this;
+	}
+	CardMemorie operator++(int) {
+		CardMemorie aux = *this;
+		this->memorie++;
+		return aux;
+	}
+};
 
 class Drona {
 private:
@@ -246,6 +314,8 @@ private:
 	float autonomie;
 	string conectivitate;
 	float altitudineZbor;
+	
+
 public:
 	static int getPerioadaRetur() {
 		return perioadaRetur;
@@ -657,40 +727,66 @@ void main() {
 	AparatFoto* pointerAparat = new AparatFoto();
 	int dimVector = 3;
 	//vector
-	for (int i = 0; i < dimVector; i++) {
-		cin >> v_aparat[i];
-		cout << "\n-----------"<<endl;
-	}
-	for (int i = 0; i < dimVector; i++) {
-		cout<< v_aparat[i];
-		cout << "\n-----------" << endl;
-	}
-	delete[]v_aparat;
-	//matrice
-	int linii = 2;
-	int coloane = 2;
+	//for (int i = 0; i < dimVector; i++) {
+	//	cin >> v_aparat[i];
+	//	cout << "\n-----------"<<endl;
+	//}
+	//for (int i = 0; i < dimVector; i++) {
+	//	cout<< v_aparat[i];
+	//	cout << "\n-----------" << endl;
+	//}
+	//delete[]v_aparat;
+	////matrice
+	//int linii = 2;
+	//int coloane = 2;
 
-	AparatFoto** matrice = new AparatFoto*[linii];
-	for (int i = 0; i < linii; i++) {
-		matrice[i] = new AparatFoto[coloane];
-	}
-	for (int i = 0; i < linii; i++) {
-		for (int j = 0; j < coloane; j++) {
-			cout << "Valoare matrice [" << i << "]["<< j <<"]"<<endl;
-			cin >> matrice[i][j];
-		}
-	}
-	for (int i = 0; i < linii; i++) {
-		for (int j = 0; j < coloane; j++) {
-			cout<<matrice[i][j];
-		}
-	}
-	for (int i = 0; i < linii; i++) {
-		delete[] matrice[i];
-	}
-	delete[]matrice;
-
-
+	//AparatFoto** matrice = new AparatFoto*[linii];
+	//for (int i = 0; i < linii; i++) {
+	//	matrice[i] = new AparatFoto[coloane];
+	//}
+	//for (int i = 0; i < linii; i++) {
+	//	for (int j = 0; j < coloane; j++) {
+	//		cout << "Valoare matrice [" << i << "]["<< j <<"]"<<endl;
+	//		cin >> matrice[i][j];
+	//	}
+	//}
+	//for (int i = 0; i < linii; i++) {
+	//	for (int j = 0; j < coloane; j++) {
+	//		cout<<matrice[i][j];
+	//	}
+	//}
+	//for (int i = 0; i < linii; i++) {
+	//	delete[] matrice[i];
+	//}
+	//delete[]matrice;
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+	cout << "\nCARD MEMORIE" << endl;
+	CardMemorie card(3, "samsung",aparat1);
+	cout << "\nOperator <<\n";
+	cout << card;
+	cout << "\n------------------------------------------------------------------------------------"<<endl;
+	cout << "\nOperator index";
+	cout << "\nProducator: " << card.getProducator();
+	card[0] = 'X';
+	cout << "\nProducator: "<<card.getProducator();
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+	cout << "\nOperatori++"<<endl;
+	cout << "Memorie initiala: "<<card.getMemorie() << endl;
+	card++;
+	cout << "card++: "<<card.getMemorie() << endl;
+	++card;
+	cout << "++card: "<<card.getMemorie() << endl;
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+	CardMemorie card1(card);
+	cout << "\nConstructor copiere"<<endl;
+	cout << card1;
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+	AparatFoto aparat2("Sony", 2, "DSLR");
+	CardMemorie card2(4, "Humus", aparat2);
+	cout << "\nOperator =" << endl;
+	card1 = card2;
+	cout << card1;
+	cout << "\n------------------------------------------------------------------------------------" << endl;
 
 	cout << "APARAT" << endl;
 	cout << "\nId: " << aparat1.getId() << "\nTip: " << aparat1.getTipAparat() << "\nModelul: " << aparat1.getModel() << "\nMarca: "
@@ -700,7 +796,6 @@ void main() {
 	cout << "\nModelul aparatului este? " << getModel1(aparat1);
 	cout << "\n------------------------------------------------------------------------------------";;
 
-	AparatFoto aparat2("Sony", 2, "DSLR");
 	cout << endl << getPret1(aparat2);
 	cout << "\nId: " << aparat2.getId() << "\nTip: " << aparat2.getTipAparat() << "\nModelul: " << aparat2.getModel() << "\nMarca: "
 		<< aparat2.getMarca() << "\nAutonomie: " << aparat2.getAutonomie() << " de cadre " << "\nZoom :" << aparat2.getZoom() << "\nUn pret de: " << aparat2.getPret();
@@ -728,15 +823,15 @@ void main() {
 	cout << aparat4;
 	cout << "\n------------------------------------------------------------------------------------" << endl;
 	cout << "Operator !=\n\n";
-	cout << (aparat2 != aparat1);
+	cout << (aparat2 != aparat3);
 	cout << "\n------------------------------------------------------------------------------------" << endl;
 	cout << "Operator >\n\n";
-	cout << (aparat3 > aparat1);
+	cout << (aparat3 > aparat2);
 	cout << "\n------------------------------------------------------------------------------------" << endl;
 
 	cout << "DRONA" << endl;
 
-	Drona* v_drona = new Drona[3];
+	/*Drona* v_drona = new Drona[3];
 	for (int i = 0; i < dimVector; i++) {
 		cin >> v_drona[i];
 		cout << "\n-----------" << endl;
@@ -745,7 +840,7 @@ void main() {
 		cout << v_drona[i];
 		cout << "\n-----------" << endl;
 	}
-	delete[]v_drona;
+	delete[]v_drona;*/
 
 	Drona drona1("SG906 PRO Max");
 	drona1.setPerioadaRetur(29);
@@ -790,14 +885,14 @@ void main() {
 	cout << "\nPROIECTOR\n" << endl;
 
 	Proiector* v_proiector = new Proiector[3];
-	for (int i = 0; i < dimVector; i++) {
+	/*for (int i = 0; i < dimVector; i++) {
 		cin >> v_proiector[i];
 		cout << "\n-----------" << endl;
 	}
 	for (int i = 0; i < dimVector; i++) {
 		cout << v_proiector[i];
 		cout << "\n-----------" << endl;
-	}
+	}*/
 	//delete[]v_proiector;
 
 	Proiector proiector1("SW 10", "SUREWHELL");
@@ -847,6 +942,3 @@ void main() {
 	//cout<<"\nContrast:"<< proiector5.getContrast() << "\nNr Lumeni: " << proiector5.getNrLumeni() << "\nPret: " << proiector5.getPret();
 
 }
-
-
-
