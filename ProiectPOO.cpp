@@ -2,11 +2,12 @@
 //atribute normale, constante si statice
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
+#include<string>
+#include<fstream>
 using namespace std;
 
 class AparatFoto {
 private:
-	static string portIncarcare;
 	static float TVA;
 	static float calcTVA(float a) {
 		return a * TVA;
@@ -55,8 +56,6 @@ public:
 		strcpy(this->marca, marca);
 	}
 
-
-
 	AparatFoto(const char* marca, int idNou, string tipAparatNou, string modelNou, int autonomieNoua, int zoomNou, float pretNou)
 		:id(idNou), tipAparat(tipAparatNou), model(modelNou), autonomie(autonomieNoua), zoom(zoomNou), pret(pretNou) {
 		this->marca = new char[strlen(marca) + 1];
@@ -100,7 +99,7 @@ public:
 
 		cout << " Tip: " << tipAparat << "Autonomie(cadre): "
 			<< this->autonomie << ", Zoom optic pana la: " << this->zoom << "x " << ", Pretul: " << pret << " lei"
-			<< ", Mufa incarcare: " << portIncarcare << ", Marca: " << marca;
+			 << ", Marca: " << marca;
 
 	}
 
@@ -204,15 +203,34 @@ public:
 			return S;
 		}
 
+
+	}	
+	
+	friend ofstream& operator<<(ofstream& fisier, const AparatFoto& aparat) {
+		if (aparat.marca != NULL) {
+			fisier  << aparat.model<<endl << aparat.marca<<endl << aparat.autonomie<<endl << aparat.zoom<<endl << aparat.pret;
+			fisier << endl;
+		}
+		return fisier;
+	}
+	friend ifstream& operator>>(ifstream& fisier, AparatFoto& aparat) {
+		if (aparat.marca != NULL) {
+			delete[]aparat.marca;
+		}
+			fisier >> aparat.model;
+			char aux[30];
+			fisier >> aux;
+			aparat.marca = new char[strlen(aux) + 1];
+			strcpy_s(aparat.marca, strlen(aux) + 1, aux);
+			fisier >> aparat.autonomie;
+			fisier >> aparat.zoom;
+			fisier >> aparat.pret;
+		return fisier;
 	}
 };
 
-
-
 ostream& operator<<(ostream& masina, const AparatFoto& aparat) {
-	if (aparat.marca != NULL) {
-		masina << "\nId: " << aparat.getId() << "\n" << aparat.getTipAparat();
-			
+	if (aparat.marca != NULL) {	
 		masina << "\nModel: " << aparat.getModel() << "\nMarca: "
 			<< aparat.getMarca() << "\nAutonomie: " << aparat.getAutonomie() << "\nZoom: " << aparat.getZoom() << "\nPret: " << aparat.pret;
 	}
@@ -231,48 +249,52 @@ string getModel1(AparatFoto b) {
 	}
 	//return b.model;
 }
-string AparatFoto::portIncarcare = "Type C";
 float AparatFoto::TVA = 0.19;
 
-class CardMemorie {
+class Fotograf {
 private:
-	char* producator;
-	int memorie;
+	char* denumire;
+	int nrEvenimente;
 	AparatFoto aparatFoto;
 public:
-	CardMemorie(int memorie, const char* producator, const AparatFoto& aparat) :memorie(memorie), aparatFoto(aparat) {
-		this->producator = new char[strlen(producator) + 1];
-		strcpy_s(this->producator, strlen(producator) + 1, producator);
+	Fotograf(int evenimente, const char* denumire, const AparatFoto& aparat) :nrEvenimente(evenimente), aparatFoto(aparat){
+		this->denumire = new char[strlen(denumire) + 1];
+		strcpy_s(this->denumire, strlen(denumire) + 1, denumire);
 	};
-	~CardMemorie() {
-		if (this->producator != NULL) {
-			delete[]this->producator;
+	~Fotograf() {
+		if (this->denumire != NULL) {
+			delete[]this->denumire;
 		}
 	}
-	CardMemorie(const CardMemorie& c)  {
-		this->producator = new char[strlen(c.producator) + 1];
-		strcpy_s(this->producator, strlen(c.producator) + 1, c.producator);
-		this->memorie = c.memorie;
-		aparatFoto = c.aparatFoto;
+	Fotograf(const Fotograf& c)  {
+		if (this != &c) {
+			this->denumire = new char[strlen(c.denumire) + 1];
+			strcpy_s(this->denumire, strlen(c.denumire) + 1, c.denumire);
+			this->nrEvenimente = c.nrEvenimente;
+			aparatFoto = c.aparatFoto;
+		}
+		
 	}
-	CardMemorie operator= (const CardMemorie& c) {
-		this->producator = new char[strlen(c.producator) + 1];
-		strcpy_s(this->producator, strlen(c.producator) + 1, c.producator);
-		aparatFoto = c.aparatFoto;
+	Fotograf operator= (const Fotograf& c) {
+		if (this != &c) {
+			this->denumire = new char[strlen(c.denumire) + 1];
+			strcpy_s(this->denumire, strlen(c.denumire) + 1, c.denumire);
+			aparatFoto = c.aparatFoto;
+		}
 		return *this;
 	}
-	char* getProducator() {
-		return producator;
+	char* getDenumire() {
+		return denumire;
 	}
-	void setProducator(char* producator) {
-		this->producator = new char[strlen(producator) + 1];
-		strcpy_s(this->producator, strlen(producator) + 1, producator);
+	void setProducator(char* denumire) {
+		this->denumire = new char[strlen(denumire) + 1];
+		strcpy_s(this->denumire, strlen(denumire) + 1, denumire);
 	}
-	int getMemorie() {
-		return memorie;
+	int getNrEvenimente() {
+		return nrEvenimente;
 	}
-	void setMemorie(int memorie) {
-		this->memorie = memorie;
+	void setMemorie(int nrEvenimente) {
+		this->nrEvenimente = nrEvenimente;
 	}
 
 	void setAparatFoto(AparatFoto aparat) {
@@ -282,25 +304,56 @@ public:
 		return aparatFoto;
 	}
 
-	friend ostream& operator<<(ostream& out, const CardMemorie& card) {
-		out << "Capacitate card: " << card.memorie << " GB\nTip card: " << card.producator;
+	friend ostream& operator<<(ostream& out, const Fotograf& foto) {
+		out << "Nume fotograf: " << foto.denumire << "\nNr evenimente: " << foto.nrEvenimente;
 		 {
-			out << "\nAparat asociat:\n" << (card.aparatFoto);
+			out << "\nAparat detinut:\n" << foto.aparatFoto;
 		}
 		return out;
 	}
-	char& operator[](int index) {
-		return this->producator[index];
-		return this->producator[0];
+	friend istream& operator>>(istream& in, Fotograf& foto) {
+		cout << "Nume fotograf: ";
+		in >> foto.denumire;
+		//foto.denumire = new char[strlen(foto.denumire) + 1];
+		//strcpy_s(foto.denumire, strlen(foto.denumire) + 1, foto.denumire);
+
+		cout << "Nr evenimente: ";
+		in >> foto.nrEvenimente;
+		{
+		cout << "Aparat detinut:";
+		}
+		return in;
 	}
-	CardMemorie operator++() {
-		this->memorie++;
+
+
+	char& operator[](int index) {
+		return this->denumire[index];
+		return this->denumire[0];
+	}
+	Fotograf operator++() {
+		this->nrEvenimente++;
 		return *this;
 	}
-	CardMemorie operator++(int) {
-		CardMemorie aux = *this;
-		this->memorie++;
+	Fotograf operator++(int) {
+		Fotograf aux = *this;
+		this->nrEvenimente++;
 		return aux;
+	}
+	friend ofstream& operator<<(ofstream& fisier, const Fotograf& fotograf) {
+		fisier << fotograf.denumire<<endl << fotograf.nrEvenimente<<endl << fotograf.aparatFoto <<endl;
+		return fisier;
+	}
+	friend ifstream& operator>>(ifstream& fisier, Fotograf& fotograf) {
+		if (fotograf.denumire != NULL) {
+			delete[]fotograf.denumire;
+		}
+		char aux[30];
+		fotograf.denumire = new char[strlen(aux) + 1];
+		strcpy_s(fotograf.denumire, strlen(aux) + 1, aux);
+		fisier >> fotograf.denumire;
+		fisier >> fotograf.nrEvenimente;
+		fisier >> fotograf.aparatFoto;
+
 	}
 };
 
@@ -451,6 +504,7 @@ public:
 			<< autonomie << " de h" << ", Conectivitate: " << conectivitate << ", Altitudine maxima zbor: "
 			<< altitudineZbor << ", O greutate de: " << greutate << endl;
 	}
+
 	friend istream& operator>>(istream& masina, Drona& drona);
 	friend ostream& operator<<(ostream& masina, const Drona& drona) {
 		if (drona.model != NULL) {
@@ -464,7 +518,23 @@ public:
 		return this->model[index];
 		return this->model[0];
 	}
+	friend ofstream& operator<<(ofstream& fisier, const Drona& drona) {
+		fisier  << drona.getModel() << drona.getRezolutieCamera() << endl
+			<< drona.getAutonomie()<< drona.getConectivitate() << drona.getAltitudineZbor();
+	}
 
+	friend ifstream& operator>>(ifstream& fisier, Drona& drona) {
+		if (drona.model != NULL) {
+			delete[]drona.model;
+		}
+		char aux[30];
+		drona.model = new char[strlen(aux) + 1];
+		strcpy_s(drona.model, strlen(aux) + 1, aux);
+		fisier >> drona.model;
+		fisier >> drona.rezolutieCamera;
+		fisier >> drona.autonomie;
+		fisier >> drona.altitudineZbor;
+	}
 };
 int Drona::perioadaRetur = 30;
 
@@ -477,6 +547,8 @@ istream& operator>>(istream& masina, Drona& drona) {
 		cout << "Autonomie: ";
 		masina >> drona.autonomie;
 		cout << "Conectivitatea: ";
+		masina >> drona.conectivitate;
+		cout << "Altitudine zbor: ";
 		masina >> drona.altitudineZbor;
 	}
 	return masina;
@@ -658,15 +730,6 @@ public:
 		}
 		return masina;
 	}
-	/*Proiector operator+(const Proiector& p) {
-		Proiector aux ;
-		*aux.model = *model + *p.model;
-		*aux.marca = *marca + *p.marca;
-		aux.contrast = this->contrast + p.contrast;
-		aux.nrLumeni = this->nrLumeni + p.nrLumeni;
-		aux.pret = this->pret + p.pret;
-		return aux;
-	}*/
 	void operator++()
 	{
 		++this->nrLumeni;
@@ -678,6 +741,32 @@ public:
 		}
 		else return false;
 	}
+	friend ofstream& operator<<(ofstream& fisier, const Proiector& proiector) {
+		fisier << proiector.getModel() << proiector.getMarca() <<proiector.getContrast() << proiector.getNrLumeni() << proiector.getPret();
+	}
+	friend ifstream& operator>>(ifstream& fisier, Proiector& proiector) {
+		if (proiector.marca && proiector.model != NULL) {
+			delete[]proiector.marca;
+			delete[]proiector.model;
+		}
+		char aux[30];
+		proiector.marca = new char[strlen(aux) + 1];
+		strcpy_s(proiector.marca, strlen(aux) + 1, aux);
+		proiector.model = new char[strlen(aux) + 1];
+		strcpy_s(proiector.model, strlen(aux) + 1, aux);
+		fisier >> proiector.marca;
+		fisier >> proiector.model;
+		fisier >> proiector.contrast;
+		fisier >> proiector.nrLumeni;
+		fisier >> proiector.pret;
+
+	}
+
+	/**aux.model = *model + *p.model;
+	*aux.marca = *marca + *p.marca;
+	aux.contrast = this->contrast + p.contrast;
+	aux.nrLumeni = this->nrLumeni + p.nrLumeni;
+	aux.pret = this->pret + p.pret;*/
 };
 
 ostream& operator<<(ostream& masina, const Proiector& proiector)
@@ -722,10 +811,9 @@ string Proiector::mufaConectare = "HDMI";
 void main() {
 
 	//clasa 1 Aparat Foto
-	AparatFoto aparat1("Canon");
-	AparatFoto* v_aparat = new AparatFoto[3];
-	AparatFoto* pointerAparat = new AparatFoto();
-	int dimVector = 3;
+	//AparatFoto* v_aparat = new AparatFoto[3];
+	//AparatFoto* pointerAparat = new AparatFoto();
+	//int dimVector = 3;
 	//vector
 	//for (int i = 0; i < dimVector; i++) {
 	//	cin >> v_aparat[i];
@@ -759,36 +847,9 @@ void main() {
 	//	delete[] matrice[i];
 	//}
 	//delete[]matrice;
-	cout << "\n------------------------------------------------------------------------------------" << endl;
-	cout << "\nCARD MEMORIE" << endl;
-	CardMemorie card(3, "samsung",aparat1);
-	cout << "\nOperator <<\n";
-	cout << card;
-	cout << "\n------------------------------------------------------------------------------------"<<endl;
-	cout << "\nOperator index";
-	cout << "\nProducator: " << card.getProducator();
-	card[0] = 'X';
-	cout << "\nProducator: "<<card.getProducator();
-	cout << "\n------------------------------------------------------------------------------------" << endl;
-	cout << "\nOperatori++"<<endl;
-	cout << "Memorie initiala: "<<card.getMemorie() << endl;
-	card++;
-	cout << "card++: "<<card.getMemorie() << endl;
-	++card;
-	cout << "++card: "<<card.getMemorie() << endl;
-	cout << "\n------------------------------------------------------------------------------------" << endl;
-	CardMemorie card1(card);
-	cout << "\nConstructor copiere"<<endl;
-	cout << card1;
-	cout << "\n------------------------------------------------------------------------------------" << endl;
-	AparatFoto aparat2("Sony", 2, "DSLR");
-	CardMemorie card2(4, "Humus", aparat2);
-	cout << "\nOperator =" << endl;
-	card1 = card2;
-	cout << card1;
-	cout << "\n------------------------------------------------------------------------------------" << endl;
 
 	cout << "APARAT" << endl;
+	AparatFoto aparat1("Canon");
 	cout << "\nId: " << aparat1.getId() << "\nTip: " << aparat1.getTipAparat() << "\nModelul: " << aparat1.getModel() << "\nMarca: "
 		<< aparat1.getMarca() << "\nAutonomie: " << aparat1.getAutonomie() << " de cadre " << "\nZoom :" << aparat1.getZoom() << "\nUn pret de: " << aparat1.getPret()
 		<< "\nTva calc: ";
@@ -796,6 +857,7 @@ void main() {
 	cout << "\nModelul aparatului este? " << getModel1(aparat1);
 	cout << "\n------------------------------------------------------------------------------------";;
 
+	AparatFoto aparat2("Sony", 2, "DSLR");
 	cout << endl << getPret1(aparat2);
 	cout << "\nId: " << aparat2.getId() << "\nTip: " << aparat2.getTipAparat() << "\nModelul: " << aparat2.getModel() << "\nMarca: "
 		<< aparat2.getMarca() << "\nAutonomie: " << aparat2.getAutonomie() << " de cadre " << "\nZoom :" << aparat2.getZoom() << "\nUn pret de: " << aparat2.getPret();
@@ -829,6 +891,62 @@ void main() {
 	cout << (aparat3 > aparat2);
 	cout << "\n------------------------------------------------------------------------------------" << endl;
 
+	AparatFoto ap("mihai", 2,"Camera compacta", "Sony vegas 3", 2300, 12, 400.50);
+	cout << "Operatori>> fisier text"<<endl;
+	cin >> ap;
+	ofstream f("aparat.txt", ios::app);
+	f << ap;
+	f.close();
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+
+	cout << "Operatori<< fisier text" << endl;
+	ifstream g("aparat.txt", ios::in);
+	g>> ap;
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+
+	cout << "FOTOGRAF"<<endl;
+	Fotograf fotograf1(3, "Florinel", aparat1);
+	cout << "\nOperator <<\n";
+	cout << fotograf1.getAparatFoto();
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+	cout << "\nOperator index";
+	cout << "\nProducator: " << fotograf1.getDenumire();
+	fotograf1[0] = 'X';
+	cout << "\nProducator: " << fotograf1.getDenumire();
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+	cout << "\nOperatori++" << endl;
+	cout << "Nr Evenimente initial: " << fotograf1.getNrEvenimente() << endl;
+	fotograf1++;
+	cout << "\nnrEvenimente++: " << fotograf1.getNrEvenimente() << endl;
+	++fotograf1;
+	cout << "++nrEvenimente: " << fotograf1.getNrEvenimente() << endl;
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+
+	Fotograf fotograf2(fotograf1);
+	cout << "\nConstructor copiere" << endl;
+	cout << fotograf2;
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+
+	Fotograf fotograf3(4, "Octavian Popescu", aparat3);
+	cout << "\nOperator =" << endl;
+	fotograf2 = fotograf3;
+	cout << fotograf2;
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+
+	cout << "Operatori>> fisier text" << endl;
+	cin >> fotograf3;
+	fstream h("fotograf.txt", ios::app);
+	h << fotograf3;
+	h.close();
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+
+	cout << "Operatori<< fisier text" << endl;
+	fstream i("fotograf.txt", ios::in);
+	i << fotograf3;
+	i.close();
+	cout << fotograf3;
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+
 	cout << "DRONA" << endl;
 
 	/*Drona* v_drona = new Drona[3];
@@ -845,13 +963,13 @@ void main() {
 	Drona drona1("SG906 PRO Max");
 	drona1.setPerioadaRetur(29);
 	cout << "\nId: " << drona1.getId() << "\nGreutate: " << drona1.getGreutate() << "\nModel: " << drona1.getModel() << "\nRezolutie camera: "
-		<< drona1.getRezolutieCamera() << "\nAutonomie: " << drona1.getAutonomie() << "\nConectivitate: " << drona1.getConectivitate() << "\nAltitudine zbor: " << drona1.getAltitudineZbor();
+		<< drona1.getRezolutieCamera() << "\nAutonomie: " << drona1.getAutonomie() << "\nConectivitate: " << drona1.getConectivitate() << "\nAltitudine zbor: " << drona1.getAltitudineZbor()<<endl;
 	cout << "\n" << Drona::returnarePosibila(21) << " zile";
 	cout << "\n------------------------------------------------------------------------------------";
 
 	Drona drona2("FR 11", 2, 657.5, "4k");
 	cout << "\nId: " << drona2.getId() << "\nGreutate: " << drona2.getGreutate() << "\nModel: " << drona2.getModel() << "\nRezolutie camera: "
-		<< drona2.getRezolutieCamera() << "\nAutonomie: " << drona2.getAutonomie() << "\nConectivitate: " << drona2.getConectivitate() << "\nAltitudine zbor: " << drona2.getAltitudineZbor();
+		<< drona2.getRezolutieCamera() << "\nAutonomie: " << drona2.getAutonomie() << "\nConectivitate: " << drona2.getConectivitate() << "\nAltitudine zbor: " << drona2.getAltitudineZbor()<<endl;
 	cout << "\n" << Drona::returnarePosibila(21) << " zile";
 	cout << "\n------------------------------------------------------------------------------------" << endl;
 
@@ -881,6 +999,22 @@ void main() {
 	cout << "\nOperator >=\n";
 	cout << (drona2 >= drona1);
 	cout << "\n------------------------------------------------------------------------------------" << endl;
+
+	Drona drona("SUS", 4, 1, "2k", 0.24);
+	cout << "Operatori>> fisier binar" << endl;
+	cin >> drona;
+	fstream j("drona.bin", ios::in| ios::binary);
+	j.write((char*)&drona, sizeof(drona));
+	j.close();
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+
+	cout << "Operatori<< fisier binar" << endl;
+	fstream k("drona.bin", ios::out | ios::binary);
+	k.read((char*)&drona, sizeof(Drona));
+	cout << drona;
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+
+
 
 	cout << "\nPROIECTOR\n" << endl;
 
@@ -933,8 +1067,22 @@ void main() {
 	++proiector4;
 	cout << "Operator ++\n" << proiector4;
 
-	cout << "Apel operator <\n";
-	cout << (proiector4 <= proiector2);
+	cout << "Apel operator <"<<endl;
+	cout << (proiector4 <= proiector2)<<endl;
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+
+	Proiector proiector("Floricel", "Flori", 4, "full HD", 3000, 9000, 1235.4);
+	cout << "Operatori>> fisier binar" << endl;
+	cin >> proiector;
+	fstream l("proiector.bin", ios::in);
+	l.write((char*)&proiector, sizeof(Proiector));
+	l.close();
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+
+	cout << "Operatori<< fisier binar" << endl;
+	fstream m("proiector.bin", ios::out | ios::binary);
+	m.read((char*)&proiector, sizeof(Proiector));
+	cout << proiector;
 
 	//Proiector proiector5("WowStep M", "Wowstep", 3, "HD", 2000, 7000, 995.7);
 	//proiector5 = proiector1 + proiector3;
