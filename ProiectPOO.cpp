@@ -60,7 +60,6 @@ public:
 		:id(idNou), tipAparat(tipAparatNou), model(modelNou), autonomie(autonomieNoua), zoom(zoomNou), pret(pretNou) {
 		this->marca = new char[strlen(marca) + 1];
 		strcpy(this->marca, marca);
-
 	}
 
 	AparatFoto(const AparatFoto& p) : id(p.id), tipAparat(p.tipAparat) {
@@ -250,6 +249,72 @@ string getModel1(AparatFoto b) {
 	//return b.model;
 }
 float AparatFoto::TVA = 0.19;
+
+class AparatFotoDSLR : public AparatFoto {
+private:
+	int nrTipPoze;
+	string* formatPoze;
+public:
+	int getNrTipPoze() {
+		return nrTipPoze;
+	}
+	void setNrAparat(int nrAparat) {
+		this->nrTipPoze = nrAparat;
+	}
+	string* FormatPoze() {
+		return formatPoze;
+	}
+	void setTipSenzor(string* formatPoze) {
+		for (int i = 0; i < getNrTipPoze(); i++) {
+			this->formatPoze[i] = formatPoze[i];
+		}
+	}
+	AparatFotoDSLR() :AparatFoto("Suprem") {
+		this->nrTipPoze = 0;
+		this->formatPoze = NULL;
+
+	}
+	AparatFotoDSLR(int nrTipPoze, string* formatPoze) :AparatFoto("Salut", 2, "DSLR") {
+		this->nrTipPoze = nrTipPoze;
+		this->formatPoze = new string[nrTipPoze];
+		for (int i = 0; i < nrTipPoze; i++) {
+			this->formatPoze[i] = formatPoze[i];
+		}
+	}
+
+	~AparatFotoDSLR() {
+		if (this->nrTipPoze != NULL) {
+			delete[]this->formatPoze;
+		}
+	}
+	AparatFotoDSLR(const AparatFotoDSLR& a) :AparatFoto(a) {
+		this->nrTipPoze = a.nrTipPoze;
+		this->formatPoze = new string[a.nrTipPoze];
+		for (int i = 0; i < nrTipPoze; i++) {
+			this->formatPoze[i] = a.formatPoze[i];
+		}
+	}
+	AparatFotoDSLR operator=(const AparatFotoDSLR& a) {
+		if (this != &a) {
+			AparatFoto::operator=(a);
+			this->formatPoze = new string[a.nrTipPoze];
+			for (int i = 0; i < nrTipPoze; i++) {
+				this->formatPoze[i] = a.formatPoze[i];
+			}
+		}
+		return *this;
+	}
+	friend ostream& operator<<(ostream& out, const AparatFotoDSLR& aparat) {
+		out << "Numar de formate: " << aparat.nrTipPoze;
+		out << "\nFormate fotografii: ";
+		for (int i = 0; i < aparat.nrTipPoze; i++) {
+			out << aparat.formatPoze[i]<<";";
+		}
+		out << (AparatFoto)aparat;
+		return out;
+	}
+
+};
 
 class Fotograf {
 private:
@@ -464,7 +529,6 @@ public:
 		if (this != &p) {
 			if (this->model != NULL) {
 				delete[]this->model;
-				//ce fac cu atributele constante
 				this->rezolutieCamera = p.rezolutieCamera;
 				this->autonomie = p.autonomie;
 				this->conectivitate = p.conectivitate;
@@ -508,7 +572,7 @@ public:
 	friend istream& operator>>(istream& masina, Drona& drona);
 	friend ostream& operator<<(ostream& masina, const Drona& drona) {
 		if (drona.model != NULL) {
-			masina << "\nId: " << drona.getId() << "\nGreutate: " << drona.getGreutate() << "\nModel:" << drona.getModel() << "\nRezolutie: "
+			masina << "\nModel:" << drona.getModel() << "\nRezolutie: "
 				<< drona.getRezolutieCamera() << "\nAutonomie: " << drona.getAutonomie() << " h" << "\nConectivitate: " << drona.getConectivitate()
 				<< "\nAltitudine zbor:" << drona.getAltitudineZbor();
 		}
@@ -555,7 +619,72 @@ istream& operator>>(istream& masina, Drona& drona) {
 
 
 };
+class DronaDeVanatoare: public Drona {
+private:
+	int nrMateriale;
+	string* tipuriMateriale;
+public:
+	int getNrMateriale() {
+		return this->nrMateriale;
+	}
+	void setNrMateriale(int nrMateriale) {
+		this->nrMateriale = nrMateriale;
+	}
+	string* getTipuriMateriale() {
+		return this->tipuriMateriale;
+	}
+	void setTipuriMateriale(string* tipuriMateriale) {
+		for (int i = 0; i < getNrMateriale(); i++) {
+			this->tipuriMateriale[i] = tipuriMateriale[i];
+		}
+	}
+	DronaDeVanatoare() :Drona("Sus ca jordan") {
+		this->nrMateriale = 0;
+		this->tipuriMateriale = NULL;
+	}
+	DronaDeVanatoare(int nrMateriale, string* tipuriMateriale) :Drona("Salam", 2, 156.56, "720p") {
+		this->nrMateriale = nrMateriale;
+		this->tipuriMateriale = new string[nrMateriale];
+		for (int i = 0; i < nrMateriale; i++) {
+			this->tipuriMateriale[i] = tipuriMateriale[i];
+		}
+	}
+	~DronaDeVanatoare() {
+		if (this->nrMateriale != 0) {
+			delete[]this->tipuriMateriale;
+		}
+	}
+	DronaDeVanatoare(const DronaDeVanatoare& d):Drona(d) {
+		if (this != &d) {
+			this->nrMateriale = d.nrMateriale;
+			this->tipuriMateriale = new string[nrMateriale];
+			for (int i = 0; i < nrMateriale; i++) {
+				this->tipuriMateriale[i] = d.tipuriMateriale[i];
+			}
+		}
+	}
+	DronaDeVanatoare operator=(const DronaDeVanatoare& d) {
+		if (this != &d) {
+			Drona::operator=(d); 
+			this->nrMateriale = d.nrMateriale;
+			this->tipuriMateriale = new string[nrMateriale];
+			for (int i = 0; i < nrMateriale; i++) {
+				this->tipuriMateriale[i] = d.tipuriMateriale[i];
+			}
+		}
+		return *this;
+	}
+	friend ostream& operator<<(ostream& out, const DronaDeVanatoare& drona) {
+		out << "Numar materiale plasa: "<<drona.nrMateriale<<endl;
+		out << "Materiale: ";
+		for (int i = 0; i < drona.nrMateriale; i++) {
+			out << drona.tipuriMateriale[i]<<";";
+		}
+		out << (Drona)drona;
+		return out;
+	}
 
+};
 
 class Proiector {
 private:
@@ -676,6 +805,7 @@ public:
 		this->pret = p.pret;
 
 	}
+
 	Proiector operator=(const Proiector& p) {
 		if (this != &p) {
 			if (this->model != NULL) {
@@ -759,14 +889,7 @@ public:
 		fisier >> proiector.contrast;
 		fisier >> proiector.nrLumeni;
 		fisier >> proiector.pret;
-
 	}
-
-	/**aux.model = *model + *p.model;
-	*aux.marca = *marca + *p.marca;
-	aux.contrast = this->contrast + p.contrast;
-	aux.nrLumeni = this->nrLumeni + p.nrLumeni;
-	aux.pret = this->pret + p.pret;*/
 };
 
 ostream& operator<<(ostream& masina, const Proiector& proiector)
@@ -893,15 +1016,32 @@ void main() {
 
 	AparatFoto ap("mihai", 2,"Camera compacta", "Sony vegas 3", 2300, 12, 400.50);
 	cout << "Operatori>> fisier text"<<endl;
-	cin >> ap;
+	//cin >> ap;
 	ofstream f("aparat.txt", ios::app);
 	f << ap;
-	f.close();
+	//f.close();
 	cout << "\n------------------------------------------------------------------------------------" << endl;
 
 	cout << "Operatori<< fisier text" << endl;
 	ifstream g("aparat.txt", ios::in);
-	g>> ap;
+	//g>> ap;
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+	
+	cout << "AparatFotoDSLR" << endl;
+	string* formatPoze = new string[2];
+	formatPoze[0] = { "JPEG" };
+	formatPoze[1] = { "RAW" };
+	AparatFotoDSLR dslr1;
+	cout << dslr1;
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+	AparatFotoDSLR dslr2(2 ,formatPoze);
+	cout << dslr2;
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+	AparatFotoDSLR dslr3(dslr2);
+	cout << dslr2;
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+	dslr1=dslr3;
+	cout << dslr2;
 	cout << "\n------------------------------------------------------------------------------------" << endl;
 
 	cout << "FOTOGRAF"<<endl;
@@ -934,7 +1074,7 @@ void main() {
 	cout << "\n------------------------------------------------------------------------------------" << endl;
 
 	cout << "Operatori>> fisier text" << endl;
-	cin >> fotograf3;
+	//cin >> fotograf3;
 	fstream h("fotograf.txt", ios::app);
 	h << fotograf3;
 	h.close();
@@ -1002,7 +1142,7 @@ void main() {
 
 	Drona drona("SUS", 4, 1, "2k", 0.24);
 	cout << "Operatori>> fisier binar" << endl;
-	cin >> drona;
+	//cin >> drona;
 	fstream j("drona.bin", ios::in| ios::binary);
 	j.write((char*)&drona, sizeof(drona));
 	j.close();
@@ -1014,6 +1154,22 @@ void main() {
 	cout << drona;
 	cout << "\n------------------------------------------------------------------------------------" << endl;
 
+	cout << "DRONA DE VANATOARE" << endl;
+	string* tipuriMateriale = new string[2];
+	tipuriMateriale[0] = "Nylon";
+	tipuriMateriale[1] = "Fibra de sticla";
+	DronaDeVanatoare dvanatoare1;
+	cout << dvanatoare1;
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+	DronaDeVanatoare dvanatoare2(2,tipuriMateriale);
+	cout << dvanatoare2;
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+	DronaDeVanatoare dvanatoare3(dvanatoare1);
+	cout << dvanatoare3;
+	cout << "\n------------------------------------------------------------------------------------" << endl;
+	dvanatoare3 = dvanatoare2;
+	cout << dvanatoare3;
+	cout << "\n------------------------------------------------------------------------------------" << endl;
 
 
 	cout << "\nPROIECTOR\n" << endl;
@@ -1073,7 +1229,7 @@ void main() {
 
 	Proiector proiector("Floricel", "Flori", 4, "full HD", 3000, 9000, 1235.4);
 	cout << "Operatori>> fisier binar" << endl;
-	cin >> proiector;
+	//cin >> proiector;
 	fstream l("proiector.bin", ios::in);
 	l.write((char*)&proiector, sizeof(Proiector));
 	l.close();
@@ -1083,10 +1239,4 @@ void main() {
 	fstream m("proiector.bin", ios::out | ios::binary);
 	m.read((char*)&proiector, sizeof(Proiector));
 	cout << proiector;
-
-	//Proiector proiector5("WowStep M", "Wowstep", 3, "HD", 2000, 7000, 995.7);
-	//proiector5 = proiector1 + proiector3;
-	//cout << "\nOperator +";
-	//cout<<"\nContrast:"<< proiector5.getContrast() << "\nNr Lumeni: " << proiector5.getNrLumeni() << "\nPret: " << proiector5.getPret();
-
 }
